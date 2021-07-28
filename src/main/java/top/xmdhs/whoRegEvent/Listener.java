@@ -21,7 +21,7 @@ public class Listener implements org.bukkit.event.Listener {
             send.sendMessage("以下插件注册了 " + eventName);
             for (RegisteredListener p :event.getHandlers().getRegisteredListeners()){
                 if (p.getPlugin().equals(Main.p)){
-                    return;
+                    continue;
                 }
                 send.sendMessage(p.getPlugin().getName());
             }
