@@ -15,11 +15,13 @@ public class Listener implements org.bukkit.event.Listener {
         ArrayList<HandlerList> hl = HandlerList.getHandlerLists();
         Set<String> s = new HashSet<>();
         for (HandlerList h : hl) {
+            C:
             for (RegisteredListener r : h.getRegisteredListeners()) {
                 for (Method m : r.getListener().getClass().getMethods()) {
                     for (Class<?> c : m.getParameterTypes()) {
                         if (ec.equals(c)) {
                             s.add(r.getPlugin().getName() + " " + r.getListener().getClass().getName());
+                            continue C;
                         }
                     }
                 }
