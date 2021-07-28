@@ -9,6 +9,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.lang.reflect.InvocationTargetException;
+
 public class Main extends JavaPlugin implements CommandExecutor {
     protected static Plugin p;
     private final Listener l = new Listener();
@@ -36,7 +38,7 @@ public class Main extends JavaPlugin implements CommandExecutor {
         }
         try {
             l.regEvent(strings[0], commandSender);
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             commandSender.sendMessage("没有这个事件");
             e.printStackTrace();
             return false;
