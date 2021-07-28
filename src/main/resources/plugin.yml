@@ -1,0 +1,8 @@
+name: whoRegEvent
+main: top.xmdhs.whoRegEvent.Main
+api-version: 1.13
+version: 0.0.1
+author: xmdhs
+commands:
+  whoregevent:
+    description: 查看谁监听了这个 event
