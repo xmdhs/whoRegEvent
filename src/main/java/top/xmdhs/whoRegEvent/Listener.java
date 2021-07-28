@@ -1,15 +1,11 @@
 package top.xmdhs.whoRegEvent;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.HandlerList;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.RegisteredListener;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class Listener implements org.bukkit.event.Listener {
 
@@ -17,20 +13,20 @@ public class Listener implements org.bukkit.event.Listener {
         Class<?> ec = Class.forName(eventName);
 
         ArrayList<HandlerList> hl = HandlerList.getHandlerLists();
-        Set<String> sl = new HashSet<>();
+        Set<String> s = new HashSet<>();
         for (HandlerList h : hl) {
             for (RegisteredListener r : h.getRegisteredListeners()) {
                 for (Method m : r.getListener().getClass().getMethods()) {
                     for (Class<?> c : m.getParameterTypes()) {
                         if (ec.equals(c)) {
-                            sl.add(r.getPlugin().getName() + " " + r.getPriority().toString() + " " + r.getListener().getClass().getName());
+                            s.add(r.getPlugin().getName() + " " + r.getListener().getClass().getName());
                         }
                     }
                 }
             }
         }
-        for (String s : sl) {
-            send.sendMessage(s);
+        for (String msg : s) {
+            send.sendMessage(msg);
         }
     }
 }
