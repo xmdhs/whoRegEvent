@@ -40,15 +40,18 @@ public class Main extends JavaPlugin implements CommandExecutor {
         }
         Add a = map.get(strings[0]);
         if (a == null || !a.on) {
-            if (a == null){
-                try {
-                    a = new Add(strings[0], commandSender);
-                } catch (ClassNotFoundException e) {
-                    commandSender.sendMessage("没有这个事件");
-                    e.printStackTrace();
-                    return false;
-                }
+            if (a != null) {
+                a.on = true;
+                return true;
             }
+            try {
+                a = new Add(strings[0], commandSender);
+            } catch (ClassNotFoundException e) {
+                commandSender.sendMessage("没有这个事件");
+                e.printStackTrace();
+                return false;
+            }
+
             a.on = true;
             a.send = commandSender;
             map.put(strings[0], a);
@@ -61,8 +64,8 @@ public class Main extends JavaPlugin implements CommandExecutor {
                 e.printStackTrace();
             }
         } else {
-                a.on = false;
-                commandSender.sendMessage("已停止检测 " + strings[0]);
+            a.on = false;
+            commandSender.sendMessage("已停止检测 " + strings[0]);
         }
         return true;
     }
