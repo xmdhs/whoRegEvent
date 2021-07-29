@@ -14,8 +14,9 @@ import java.util.*;
 public class Add implements org.bukkit.event.Listener {
 
     private final Class<?> ec;
-    private final CommandSender send;
+    public CommandSender send;
     private final Set<String> s = new HashSet<>();
+    public boolean on;
 
     public Add(String eventName, CommandSender send) throws ClassNotFoundException {
         this.ec = Class.forName(eventName);
@@ -56,14 +57,14 @@ public class Add implements org.bukkit.event.Listener {
             Bukkit.getPluginManager().registerEvent((Class<? extends Event>) ec, i.l, i.e, (l, e) -> {
                 try {
                     i.m.invoke(i.l, e);
-                    if (e instanceof Cancellable ) {
-                       if(((Cancellable) e).isCancelled() && !eSet.contains(e)){
-                           send.sendMessage(i.p.getName() + " 取消了" + e.getEventName() + " 事件");
-                           eSet.add(e);
-                       }
-                       if (!((Cancellable) e).isCancelled() && eSet.contains(e)){
-                           send.sendMessage(i.p.getName() + " 恢复了" + e.getEventName() + " 事件");
-                       }
+                    if (on && e instanceof Cancellable) {
+                        if (((Cancellable) e).isCancelled() && !eSet.contains(e)) {
+                            send.sendMessage(i.p.getName() + " 取消了" + e.getEventName() + " 事件");
+                            eSet.add(e);
+                        }
+                        if (!((Cancellable) e).isCancelled() && eSet.contains(e)) {
+                            send.sendMessage(i.p.getName() + " 恢复了" + e.getEventName() + " 事件");
+                        }
                     }
                 } catch (IllegalAccessException | InvocationTargetException illegalAccessException) {
                     illegalAccessException.printStackTrace();
@@ -73,10 +74,5 @@ public class Add implements org.bukkit.event.Listener {
     }
 
 
-    public void unInsert() {
-        for (Info i : list) {
-            Bukkit.getPluginManager().registerEvents(i.l, i.p);
-        }
-    }
 
 }
