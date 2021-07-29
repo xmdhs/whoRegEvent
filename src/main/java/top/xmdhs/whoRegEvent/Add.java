@@ -15,7 +15,7 @@ public class Add implements org.bukkit.event.Listener {
 
     private final Class<?> ec;
     public CommandSender send;
-    private final Set<String> s = new HashSet<>();
+    private Set<String> s;
     public boolean on;
 
     public Add(String eventName, CommandSender send) throws ClassNotFoundException {
@@ -23,9 +23,11 @@ public class Add implements org.bukkit.event.Listener {
         this.send = send;
     }
 
-    private final List<Info> list = new ArrayList<>();
+    private List<Info> list;
 
     public void getRegEvent() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        list = new ArrayList<>();
+        s = new HashSet<>();
         HandlerList h = (HandlerList) ec.getMethod("getHandlerList").invoke(null);
         for (RegisteredListener r : h.getRegisteredListeners()) {
             for (Method m : r.getListener().getClass().getMethods()) {
