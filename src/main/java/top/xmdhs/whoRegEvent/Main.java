@@ -10,10 +10,12 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Main extends JavaPlugin implements CommandExecutor {
     protected static Plugin p;
-    private final Listener l = new Listener();
+    private Map<String, Add> map = new HashMap<>();
 
     @Override
     public void onEnable() {
@@ -36,12 +38,28 @@ public class Main extends JavaPlugin implements CommandExecutor {
             commandSender.sendMessage("/whoregevent <event class name>");
             return false;
         }
-        try {
-            l.regEvent(strings[0], commandSender);
-        } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            commandSender.sendMessage("没有这个事件");
-            e.printStackTrace();
-            return false;
+        Add a = map.get(strings[0]);
+        if (a == null) {
+            try {
+                a = new Add(strings[0], commandSender);
+            } catch (ClassNotFoundException e) {
+                commandSender.sendMessage("没有这个事件");
+                e.printStackTrace();
+                return false;
+            }
+            map.put(strings[0], a);
+            try {
+                a.getRegEvent();
+                commandSender.sendMessage("以下插件监听了 " + strings[0]);
+                a.printRegEvent();
+                a.insert();
+            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        } else {
+            a.unInsert();
+            map.remove(strings[0]);
+            commandSender.sendMessage("已停止检测 " + strings[0]);
         }
         return true;
     }
