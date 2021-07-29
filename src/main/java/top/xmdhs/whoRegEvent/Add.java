@@ -21,6 +21,7 @@ public class Add implements org.bukkit.event.Listener {
     public Add(String eventName, CommandSender send) throws ClassNotFoundException {
         this.ec = Class.forName(eventName);
         this.send = send;
+        this.on = true;
     }
 
     private final List<Info> list = new ArrayList<>();

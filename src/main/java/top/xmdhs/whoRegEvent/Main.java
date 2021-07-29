@@ -42,6 +42,7 @@ public class Main extends JavaPlugin implements CommandExecutor {
         if (a == null || !a.on) {
             if (a != null) {
                 a.on = true;
+                a.send = commandSender;
                 return true;
             }
             try {
@@ -51,9 +52,6 @@ public class Main extends JavaPlugin implements CommandExecutor {
                 e.printStackTrace();
                 return false;
             }
-
-            a.on = true;
-            a.send = commandSender;
             map.put(strings[0], a);
             try {
                 a.getRegEvent();
