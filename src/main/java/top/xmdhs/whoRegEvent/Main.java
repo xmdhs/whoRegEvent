@@ -41,8 +41,15 @@ public class Main extends JavaPlugin implements CommandExecutor {
         Add a = map.get(strings[0]);
         if (a == null || !a.on) {
             if (a != null) {
-                a.on = true;
                 a.send = commandSender;
+                try {
+                    a.getRegEvent();
+                    a.printRegEvent();
+                } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+                    e.printStackTrace();
+                    return false;
+                }
+                a.on = true;
                 return true;
             }
             try {
