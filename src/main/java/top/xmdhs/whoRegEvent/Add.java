@@ -63,11 +63,11 @@ public class Add implements org.bukkit.event.Listener {
                     i.m.invoke(i.l, e);
                     if (on && e instanceof Cancellable) {
                         if (((Cancellable) e).isCancelled() && !eSet.contains(e)) {
-                            send.sendMessage(i.p.getName() + " 取消了" + e.getEventName() + " 事件");
+                            send.sendMessage(i.p.getName() + " 取消了 " + e.getEventName() + " 事件");
                             eSet.add(e);
                         }
                         if (!((Cancellable) e).isCancelled() && eSet.contains(e)) {
-                            send.sendMessage(i.p.getName() + " 恢复了" + e.getEventName() + " 事件");
+                            send.sendMessage(i.p.getName() + " 恢复了 " + e.getEventName() + " 事件");
                         }
                     }
                 } catch (IllegalAccessException | InvocationTargetException illegalAccessException) {
