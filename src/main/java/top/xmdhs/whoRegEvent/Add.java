@@ -65,10 +65,12 @@ public class Add implements org.bukkit.event.Listener {
                             if (!has.get()) {
                                 send.sendMessage("------------");
                                 has.set(true);
+                                send.sendMessage("插件 " + i.p.getName() + " 调用了 " + e.getEventName() + " 事件的以下方法");
                             }
-                            send.sendMessage("插件 " + i.p.getName() + " 调用了 " + e.getEventName() + " 事件的 " + methodName + " 方法");
                             if (args.length != 0) {
-                                send.sendMessage("参数 " + Arrays.toString(args));
+                                send.sendMessage(methodName + " 方法，参数 " + Arrays.toString(args));
+                            } else {
+                                send.sendMessage(methodName + " 方法");
                             }
                         });
                     } catch (NoSuchFieldException ignored) {
