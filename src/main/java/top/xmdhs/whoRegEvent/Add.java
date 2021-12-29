@@ -6,7 +6,9 @@ import org.bukkit.plugin.EventExecutor;
 import org.bukkit.plugin.RegisteredListener;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -46,7 +48,7 @@ public class Add implements org.bukkit.event.Listener {
                     try {
                         Field f = e.getClass().getDeclaredField("callbackWre");
                         AtomicBoolean has = new AtomicBoolean(false);
-                        f.set(e, (Callback) (String methodName, Object[] args) -> {
+                        f.set(e, (InvocationHandler) (Object methodName, Method method, Object[] args) -> {
                             if (!has.get()) {
                                 send.sendMessage("------------");
                                 has.set(true);
@@ -57,6 +59,7 @@ public class Add implements org.bukkit.event.Listener {
                             } else {
                                 send.sendMessage(methodName + " 方法");
                             }
+                            return null;
                         });
                     } catch (NoSuchFieldException | IllegalAccessException ignored) {
                     }

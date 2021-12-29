@@ -4,14 +4,15 @@ import javassist.*;
 
 import java.io.ByteArrayInputStream;
 import java.lang.instrument.Instrumentation;
-import java.util.HashMap;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.HashSet;
 
 public class Premain {
     public static void premain(String agentArgs, Instrumentation inst) {
         HashSet<ClassLoader> h = new HashSet<>();
-        ClassPool pp = ClassPool.getDefault();
-        pp.importPackage("top.xmdhs.whoRegEvent.Callback");
+        ClassPool.getDefault().importPackage("java.lang.reflect.InvocationHandler");
         inst.addTransformer((loader, className, classBeingRedefined, protectionDomain, classfileBuffer) -> {
             if (className.startsWith("org/bukkit/event")) {
                 try {
@@ -24,18 +25,21 @@ public class Premain {
                     if (c.isInterface()) {
                         return null;
                     }
-                    CtClass cb = p.get("top.xmdhs.whoRegEvent.Callback");
+                    CtClass cb = p.get("java.lang.reflect.InvocationHandler");
                     CtField f = new CtField(cb, "callbackWre", c);
                     f.setModifiers(Modifier.PUBLIC);
                     c.addField(f, "null");
                     CtMethod mm = CtNewMethod.make("public void dosome(String a,Object[] args){}", c);
                     c.addMethod(mm);
                     mm.addLocalVariable("callbackWre", cb);
-                    mm.setBody("{if (callbackWre != null){\n" +
-                            "callbackWre.callback($1,$2);\n" +
-                            "};\n" +
+                    mm.setBody("{ try {" +
+                            "if (callbackWre != null){" +
+                            "callbackWre.invoke($1,null,$2);" +
+                            "};" +
+                            "} catch (Throwable throwable) {" +
+                            "throwable.printStackTrace();" +
+                            "};" +
                             "}");
-
                     for (CtMethod m : c.getDeclaredMethods()) {
                         if (Modifier.isStatic(m.getModifiers()) || m.isEmpty()) {
                             continue;
