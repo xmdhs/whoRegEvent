@@ -38,7 +38,7 @@ public class Premain {
                         if (m.getName().equals("dosome")) {
                             continue;
                         }
-                        m.insertAfter("{dosome(\"" + m.getName() + "\",$args);}");
+                        m.insertBefore("{dosome(\"" + m.getName() + "\",$args);}");
                     }
                     return c.toBytecode();
                 } catch (Exception e) {
