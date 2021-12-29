@@ -44,8 +44,7 @@ public class Main extends JavaPlugin implements CommandExecutor {
                 a.send = commandSender;
                 try {
                     a.getRegEvent();
-                    a.printRegEvent();
-                } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+                } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | NoSuchFieldException e) {
                     e.printStackTrace();
                     return false;
                 }
@@ -61,11 +60,10 @@ public class Main extends JavaPlugin implements CommandExecutor {
             }
             map.put(strings[0], a);
             try {
-                a.getRegEvent();
                 commandSender.sendMessage("以下插件监听了 " + strings[0]);
-                a.printRegEvent();
+                a.getRegEvent();
                 a.insert();
-            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | NoSuchFieldException e) {
                 e.printStackTrace();
             }
         } else {

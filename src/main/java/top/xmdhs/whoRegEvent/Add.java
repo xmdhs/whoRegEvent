@@ -1,14 +1,12 @@
 package top.xmdhs.whoRegEvent;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.bukkit.plugin.EventExecutor;
 import org.bukkit.plugin.RegisteredListener;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -16,7 +14,6 @@ public class Add implements org.bukkit.event.Listener {
 
     private final Class<?> ec;
     public CommandSender send;
-    private Set<String> s = null;
     public boolean on;
 
     public Add(String eventName, CommandSender send) throws ClassNotFoundException {
@@ -25,39 +22,27 @@ public class Add implements org.bukkit.event.Listener {
         this.on = true;
     }
 
-    private List<Info> list = null;
 
-    public void getRegEvent() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        list = new ArrayList<>();
-        s = new HashSet<>();
+    public void getRegEvent() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, NoSuchFieldException {
+        Set<String> s1 = new HashSet<>();
         HandlerList h = (HandlerList) ec.getMethod("getHandlerList").invoke(null);
         for (RegisteredListener r : h.getRegisteredListeners()) {
-            for (Method m : r.getListener().getClass().getMethods()) {
-                for (Class<?> c : m.getParameterTypes()) {
-                    if (ec.equals(c)) {
-                        s.add(r.getPlugin().getName() + " " + r.getListener().getClass().getName());
-                        list.add(new Info(r.getPlugin(), r.getListener(), m, r.getPriority()));
-                    }
-                }
-            }
+            s1.add(r.getPlugin().getName() + " " + r.getListener().getClass().getName());
         }
-    }
-
-    public void printRegEvent() {
-        if (s.size() == 0) {
-            return;
-        }
-        for (String s : s) {
+        for (String s : s1) {
             send.sendMessage(s);
         }
     }
 
-    public void insert() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+
+    public void insert() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, NoSuchFieldException {
         HandlerList h = (HandlerList) ec.getMethod("getHandlerList").invoke(null);
-        for (Info i : list) {
-            h.unregister(i.p);
-            Bukkit.getPluginManager().registerEvent((Class<? extends Event>) ec, i.l, i.e, (l, e) -> {
-                try {
+        for (RegisteredListener r : h.getRegisteredListeners()) {
+            Field ff = r.getClass().getDeclaredField("executor");
+            ff.setAccessible(true);
+            EventExecutor ex = (EventExecutor) ff.get(r);
+            ff.set(r, (EventExecutor) (l, e) -> {
+                if (on) {
                     try {
                         Field f = e.getClass().getDeclaredField("callbackWre");
                         AtomicBoolean has = new AtomicBoolean(false);
@@ -65,7 +50,7 @@ public class Add implements org.bukkit.event.Listener {
                             if (!has.get()) {
                                 send.sendMessage("------------");
                                 has.set(true);
-                                send.sendMessage("插件 " + i.p.getName() + " 调用了 " + e.getEventName() + " 事件的以下方法");
+                                send.sendMessage("插件 " + r.getPlugin().getName() + " 调用了 " + e.getEventName() + " 事件的以下方法");
                             }
                             if (args.length != 0) {
                                 send.sendMessage(methodName + " 方法，参数 " + Arrays.toString(args));
@@ -73,14 +58,11 @@ public class Add implements org.bukkit.event.Listener {
                                 send.sendMessage(methodName + " 方法");
                             }
                         });
-                    } catch (NoSuchFieldException ignored) {
+                    } catch (NoSuchFieldException | IllegalAccessException ignored) {
                     }
-                    i.m.invoke(i.l, e);
-                } catch (IllegalAccessException | InvocationTargetException illegalAccessException) {
-                    illegalAccessException.printStackTrace();
                 }
-            }, i.p, false);
+                ex.execute(l, e);
+            });
         }
     }
-
 }

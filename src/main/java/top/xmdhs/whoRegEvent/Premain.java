@@ -15,7 +15,7 @@ public class Premain {
                 try {
                     ClassPool p = ClassPool.getDefault();
                     CtClass c = p.makeClass(new ByteArrayInputStream(classfileBuffer));
-                    if (c.isInterface() || Modifier.isAbstract(c.getModifiers())) {
+                    if (c.isInterface()) {
                         return null;
                     }
 
