@@ -35,7 +35,7 @@ public class Premain {
                         if (Modifier.isStatic(m.getModifiers()) || m.isEmpty()) {
                             continue;
                         }
-                        if (m.getName().equals("dosome")) {
+                        if (m.getName().equals("dosome") || m.getName().equals("getEventName")) {
                             continue;
                         }
                         m.insertBefore("{dosome(\"" + m.getName() + "\",$args);}");
