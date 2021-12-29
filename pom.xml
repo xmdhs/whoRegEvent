@@ -27,6 +27,11 @@
             <version>1.16.5-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.javassist</groupId>
+            <artifactId>javassist</artifactId>
+            <version>3.28.0-GA</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -60,10 +65,24 @@
                         </filter>
                     </filters>
                     <transformers>
-                        <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                        <transformer
+                                implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                             <mainClass>top.xmdhs.whoRegEvent.Main</mainClass>
                         </transformer>
+                        <transformer
+                                implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                            <manifestEntries>
+                                <Premain-Class>top.xmdhs.whoRegEvent.Premain</Premain-Class>
+                            </manifestEntries>
+                        </transformer>
                     </transformers>
+                    <relocations>
+                        <relocation>
+                            <pattern>javassist</pattern>
+                            <shadedPattern>top.xmdhs.lib.javassist</shadedPattern>
+                        </relocation>
+                    </relocations>
+
                 </configuration>
                 <executions>
                     <execution>
